@@ -55,6 +55,7 @@
       height: auto;
       display: block;
       cursor: move;
+      touch-action: none;
     }
     .download-btn {
       background: #27ae60;
@@ -162,7 +163,7 @@
 
   <p class="disclaimer">Photos are processed in your browser only — nothing is uploaded or stored.</p>
 
-  <p style="font-size: 0.8em; color: #999; margin-top: 60px;">Version 1.18 – Feb 23, 2026 – Frame on Top + Privacy Note</p>
+  <p style="font-size: 0.8em; color: #999; margin-top: 60px;">Version 1.19 – Feb 23, 2026 – Frame on Top + Privacy Note</p>
 
   <script>
     const canvas = document.getElementById('canvas');
@@ -271,7 +272,7 @@
       });
     }
 
-    // Touch support (mobile)
+    // Touch support (mobile drag & pinch)
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       if (activePhotoIndex < 0) return;
