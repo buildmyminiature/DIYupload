@@ -163,7 +163,7 @@
 
   <p class="disclaimer">Photos are processed in your browser only — nothing is uploaded or stored.</p>
 
-  <p style="font-size: 0.8em; color: #999; margin-top: 60px;">Version 1.19 – Feb 23, 2026 – Frame on Top + Privacy Note</p>
+  <p style="font-size: 0.8em; color: #999; margin-top: 60px;">Version 1.20 – Feb 23, 2026 – Zoom Out to 1% + Frame on Top</p>
 
   <script>
     const canvas = document.getElementById('canvas');
@@ -221,7 +221,7 @@
 
           const scaleX = holeWidth / tempImg.width;
           const scaleY = holeHeight / tempImg.height;
-          const scale = Math.min(scaleX, scaleY) * 0.7;
+          const scale = Math.min(scaleX, scaleY) * 0.7; // Start smaller
 
           const x = holeLeft + (holeWidth - tempImg.width * scale) / 2;
           const y = holeTop + (holeHeight - tempImg.height * scale) / 2;
@@ -306,7 +306,7 @@
           let zoomFactor = newDist / touchDist;
           zoomFactor = 1 + (zoomFactor - 1) * 0.45;
           photos[activePhotoIndex].scale *= zoomFactor;
-          photos[activePhotoIndex].scale = Math.max(0.1, Math.min(photos[activePhotoIndex].scale, 8));
+          photos[activePhotoIndex].scale = Math.max(0.01, Math.min(photos[activePhotoIndex].scale, 8)); // Allow 1% min size
         }
         touchDist = newDist;
         drawAll();
@@ -348,7 +348,7 @@
       if (activePhotoIndex < 0) return;
       const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
       photos[activePhotoIndex].scale *= zoomFactor;
-      photos[activePhotoIndex].scale = Math.max(0.1, Math.min(photos[activePhotoIndex].scale, 8));
+      photos[activePhotoIndex].scale = Math.max(0.01, Math.min(photos[activePhotoIndex].scale, 8));
       drawAll();
     });
 
