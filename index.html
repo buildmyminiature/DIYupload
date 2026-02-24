@@ -3,135 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Dollhouse Frame – Build My Mini</title>
+  <title>Frame Tool</title>
   <style>
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #f8f9fa;
-      color: #333;
-      margin: 0;
-      padding: 40px 20px;
-      text-align: center;
+    body { 
+      margin:0; 
+      padding:0; 
+      background:#f8f9fa; 
+      overflow:hidden; 
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      color: #222;
+    #preview { 
+      margin:0 auto; 
+      max-width:600px; 
+      background:white; 
+      overflow:hidden; 
+      border:1px solid #ddd; 
+      border-radius:12px; 
     }
-    p {
-      font-size: 1.2em;
-      color: #555;
-      margin-bottom: 20px;
+    canvas { 
+      width:100%; 
+      height:auto; 
+      display:block; 
+      cursor:move; 
+      touch-action:none; 
     }
-    input { display: none; }
     .upload-btn {
-      background: #4a90e2;
-      color: white;
-      padding: 14px 28px;
-      border: none;
-      border-radius: 50px;
-      font-size: 1.1em;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      display: inline-block;
-    }
-    .upload-btn:hover {
-      background: #357abd;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    #preview {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      margin: 30px auto;
-      max-width: 600px;
-      background: white;
-      overflow: hidden;
-    }
-    canvas {
-      width: 100%;
-      height: auto;
-      display: block;
-      cursor: move;
+      background:#4a90e2;
+      color:white;
+      padding:12px 24px;
+      border:none;
+      border-radius:50px;
+      font-size:1em;
+      cursor:pointer;
+      display:block;
+      margin:15px auto;
     }
     .download-btn {
-      background: #27ae60;
-      color: white;
-      padding: 14px 32px;
-      border: none;
-      border-radius: 50px;
-      font-size: 1.2em;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-    .download-btn:hover {
-      background: #219653;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .disclaimer {
-      font-size: 0.9em;
-      color: #777;
-      margin-top: 40px;
-    }
-    .instructions {
-      font-size: 1em;
-      color: #666;
-      margin: 10px 0;
+      background:#8B4513;
+      color:white;
+      padding:12px 24px;
+      border:none;
+      border-radius:50px;
+      font-size:1em;
+      cursor:pointer;
+      display:block;
+      margin:15px auto;
     }
     #photo-list {
-      margin: 20px auto;
-      max-width: 600px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
+      margin:15px auto;
+      max-width:600px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
     }
-    .photo-thumb-container {
-      position: relative;
-      display: inline-block;
-    }
+    .photo-thumb-container { position:relative; display:inline-block; }
     .photo-thumb {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
+      width:70px;
+      height:70px;
+      object-fit:cover;
+      border:2px solid #ddd;
+      border-radius:8px;
+      cursor:pointer;
     }
-    .photo-thumb:hover, .photo-thumb.active {
-      border-color: #4a90e2;
-      transform: scale(1.05);
-    }
+    .photo-thumb.active { border-color:#4a90e2; }
     .delete-btn {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 22px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      position:absolute;
+      top:-8px;
+      right:-8px;
+      background:#ff4d4d;
+      color:white;
+      border:none;
+      border-radius:50%;
+      width:20px;
+      height:20px;
+      font-size:12px;
+      cursor:pointer;
     }
   </style>
 </head>
 <body>
-  <img src="bmm-logo.png" alt="Build My Mini BMM" style="max-width: 180px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;">
-
-  <h1>Make Your Own Mini Frame</h1>
-  <p>Upload photos one by one, drag & zoom each, delete if needed, then download!</p>
-  <p class="instructions">Click thumbnail to select • Drag/zoom selected • Click red X to delete</p>
 
   <label for="upload" class="upload-btn">Add Photo</label>
   <input type="file" id="upload" accept="image/*">
@@ -142,11 +92,7 @@
 
   <div id="photo-list"></div>
 
-  <button class="download-btn" onclick="downloadPNG()">Download PNG (High-Res)</button>
-
-  <p class="disclaimer">Photos are processed in your browser only — nothing is uploaded or stored.</p>
-
-  <p style="font-size: 0.8em; color: #999; margin-top: 60px;">Version 1.18 – Feb 23, 2026 – Frame on Top in PNG Download</p>
+  <button class="download-btn" onclick="downloadPNG()">Download PNG</button>
 
   <script>
     const canvas = document.getElementById('canvas');
@@ -164,30 +110,22 @@
 
     function drawAll() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
 
-      // Draw photos first (under layer)
       photos.forEach((photoObj, i) => {
         const { img, x, y, scale } = photoObj;
         const w = img.width * scale;
         const h = img.height * scale;
         ctx.drawImage(img, x, y, w, h);
+
+        if (i === activePhotoIndex) {
+          ctx.strokeStyle = 'rgba(74, 144, 226, 0.9)';
+          ctx.lineWidth = 6;
+          ctx.strokeRect(x - 3, y - 3, w + 6, h + 6);
+        }
       });
-
-      // Draw frame ON TOP
-      ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-
-      // Draw selection border ON TOP
-      if (activePhotoIndex >= 0 && photos[activePhotoIndex]) {
-        const { x, y, scale } = photos[activePhotoIndex];
-        const w = photos[activePhotoIndex].img.width * scale;
-        const h = photos[activePhotoIndex].img.height * scale;
-        ctx.strokeStyle = 'rgba(74, 144, 226, 0.9)';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(x - 4, y - 4, w + 8, h + 8);
-      }
     }
 
-    // Upload one photo at a time
     document.getElementById('upload').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -255,7 +193,7 @@
       });
     }
 
-    // Touch support (mobile)
+    // Touch support
     canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       if (activePhotoIndex < 0) return;
@@ -289,7 +227,7 @@
           let zoomFactor = newDist / touchDist;
           zoomFactor = 1 + (zoomFactor - 1) * 0.45;
           photos[activePhotoIndex].scale *= zoomFactor;
-          photos[activePhotoIndex].scale = Math.max(0.1, Math.min(photos[activePhotoIndex].scale, 8));
+          photos[activePhotoIndex].scale = Math.max(0.01, Math.min(photos[activePhotoIndex].scale, 8));
         }
         touchDist = newDist;
         drawAll();
@@ -331,21 +269,20 @@
       if (activePhotoIndex < 0) return;
       const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
       photos[activePhotoIndex].scale *= zoomFactor;
-      photos[activePhotoIndex].scale = Math.max(0.1, Math.min(photos[activePhotoIndex].scale, 8));
+      photos[activePhotoIndex].scale = Math.max(0.01, Math.min(photos[activePhotoIndex].scale, 8));
       drawAll();
     });
 
-    // Download high-res PNG with correct layer order
+    // Download high-res PNG with frame on top
     function downloadPNG() {
       const tempCanvas = document.createElement('canvas');
-      const scaleFactor = 2; // 2x resolution for sharp print
+      const scaleFactor = 2;
       tempCanvas.width = canvas.width * scaleFactor;
       tempCanvas.height = canvas.height * scaleFactor;
       const tempCtx = tempCanvas.getContext('2d');
 
       tempCtx.scale(scaleFactor, scaleFactor);
 
-      // Draw photos first (under layer)
       photos.forEach((photoObj) => {
         const { img, x, y, scale } = photoObj;
         const w = img.width * scale;
@@ -353,11 +290,10 @@
         tempCtx.drawImage(img, x, y, w, h);
       });
 
-      // Draw frame ON TOP
       tempCtx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
 
       const link = document.createElement('a');
-      link.download = 'your-custom-frame-high-res.png';
+      link.download = 'mini-frame.png';
       link.href = tempCanvas.toDataURL('image/png');
       link.click();
     }
