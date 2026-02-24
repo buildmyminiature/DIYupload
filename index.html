@@ -3,47 +3,174 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Mini Frame Tool</title>
+  <title>Frame Tool</title>
   <style>
-    body { margin:0; padding:0; background:#f8f9fa; font-family:Arial,sans-serif; }
+    body { margin:0; padding:0; background:#f8f9fa; overflow:hidden; }
+    #preview { margin:0 auto; max-width:600px; background:white; overflow:hidden; }
     canvas { width:100%; height:auto; display:block; cursor:move; touch-action:none; }
-    #preview { margin:0 auto; max-width:600px; background:white; overflow:hidden; border:1px solid #ddd; border-radius:12px; }
-    input { display:none; }
     .upload-btn {
-      background:#4a90e2; color:white; padding:12px 24px; border:none; border-radius:50px; cursor:pointer;
-      font-size:1em; display:inline-block; margin:20px 0;
+      background:#4a90e2;
+      color:white;
+      padding:12px 24px;
+      border:none;
+      border-radius:50px;
+      font-size:1em;
+      cursor:pointer;
+      display:block;
+      margin:20px auto;
     }
-    .download-btn {
-      background:#8B4513; color:white; padding:12px 24px; border:none; border-radius:50px; cursor:pointer;
-      font-size:1em; margin:20px 0;
-    }
-    #photo-list { margin:20px auto; max-width:600px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
-    .photo-thumb { width:60px; height:60px; object-fit:cover; border:2px solid #ddd; border-radius:8px; cursor:pointer; }
-    .photo-thumb.active { border-color:#4a90e2; }
-    .delete-btn { position:absolute; top:-8px; right:-8px; background:#ff4d4d; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; }
-    .photo-thumb-container { position:relative; }
   </style>
 </head>
 <body>
-  <label for="upload" class="upload-btn">Add Photo</label>
+  <label for="upload" class="upload-btn">Upload Photo</label>
   <input type="file" id="upload" accept="image/*">
 
   <div id="preview">
     <canvas id="canvas" width="500" height="600"></canvas>
   </div>
 
-  <div id="photo-list"></div>
-
-  <button class="download-btn" onclick="downloadPNG()">Download PNG</button>
-
   <script>
-    // // Just copy your old <script> block in, no changes needed.
-    // Example placeholder — replace with your full script:
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const frameImg = new Image();
     frameImg.src = 'frame.png';
-    // ... rest of your script ...
+
+    let img = new Image();
+    let scale = 1;
+    let x = 80;
+    let y = 100;
+    let isDragging = false;
+    let startX, startY;
+    let touchDist = 0;
+
+    frameImg.onload = () => ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+
+    document.getElementById('upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        img.src = event.target.result;
+        img.onload = () => {
+          // Start smaller and centered
+          const holeW = 340;
+          const holeH = 340;
+          const scaleX = holeW / img.width;
+          const scaleY = holeH / img.height;
+          scale = Math.min(scaleX, scaleY) * 0.7;
+          x = 80 + (holeW - img.width * scale) / 2;
+          y = 100 + (holeH - img.height * scale) / 2;
+          draw();
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+      if (img.src) {
+        const w = img.width * scale;
+        const h = img.height * scale;
+        ctx.drawImage(img, x, y, w, h);
+      }
+    }
+
+    // Touch drag & pinch
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - x;
+        startY = e.touches[0].clientY - y;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchDist = Math.hypot(dx, dy);
+      }
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && isDragging) {
+        x = e.touches[0].clientX - startX;
+        y = e.touches[0].clientY - startY;
+        draw();
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const newDist = Math.hypot(dx, dy);
+        if (touchDist > 5) {
+          let zoomFactor = newDist / touchDist;
+          zoomFactor = 1 + (zoomFactor - 1) * 0.45;
+          scale *= zoomFactor;
+          scale = Math.max(0.01, Math.min(scale, 8));
+        }
+        touchDist = newDist;
+        draw();
+      }
+    });
+
+    canvas.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // Mouse support
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.offsetX - x;
+      startY = e.offsetY - y;
+      canvas.style.cursor = 'grabbing';
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      x = e.offsetX - startX;
+      y = e.offsetY - startY;
+      draw();
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+      canvas.style.cursor = 'move';
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isDragging = false;
+      canvas.style.cursor = 'move';
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      scale *= zoomFactor;
+      scale = Math.max(0.01, Math.min(scale, 8));
+      draw();
+    });
+
+    // Download PNG
+    function downloadPNG() {
+      const tempCanvas = document.createElement('canvas');
+      const scaleFactor = 2;
+      tempCanvas.width = canvas.width * scaleFactor;
+      tempCanvas.height = canvas.height * scaleFactor;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.scale(scaleFactor, scaleFactor);
+
+      tempCtx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+      if (img.src) {
+        const w = img.width * scale;
+        const h = img.height * scale;
+        tempCtx.drawImage(img, x, y, w, h);
+      }
+
+      const link = document.createElement('a');
+      link.download = 'mini-frame.png';
+      link.href = tempCanvas.toDataURL('image/png');
+      link.click();
+    }
   </script>
 </body>
 </html>
