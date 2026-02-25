@@ -278,7 +278,7 @@
     // Download high-res PNG with correct layer order
     function downloadPNG() {
       const tempCanvas = document.createElement('canvas');
-      const scaleFactor = 2;
+      const scaleFactor = 5;
       tempCanvas.width = canvas.width * scaleFactor;
       tempCanvas.height = canvas.height * scaleFactor;
       const tempCtx = tempCanvas.getContext('2d');
@@ -306,6 +306,7 @@
 
 
 </body></html>
+
 
 
 
